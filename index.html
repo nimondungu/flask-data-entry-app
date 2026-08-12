@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Viewport tag ensures mobile devices scale pixel dimensions correctly -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Data Entry Portal</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 15px; 
+            line-height: 1.5; 
+            background-color: #f4f6f9;
+        }
+        
+        .container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        h2 { 
+            color: #2c3e50; 
+            border-bottom: 2px solid #27ae60; 
+            padding-bottom: 8px; 
+            font-size: 1.3rem;
+            margin-top: 0;
+        }
+
+        form { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+        }
+
+        input, select, button { 
+            width: 100%; 
+            padding: 12px; 
+            font-size: 16px; /* 16px prevents iOS Safari auto-zoom on focus */
+            border: 1px solid #ccc; 
+            border-radius: 6px; 
+            appearance: none;
+        }
+
+        select {
+            background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+            background-repeat: no-repeat;
+            background-position-x: 98%;
+            background-position-y: 50%;
+            background-color: #fff;
+        }
+
+        button { 
+            background-color: #27ae60; 
+            color: white; 
+            font-weight: bold; 
+            cursor: pointer; 
+            border: none; 
+            font-size: 16px;
+        }
+
+        button:hover { background-color: #219150; }
+
+        /* Responsive Table Wrapper */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 10px; 
+            min-width: 500px; /* Ensures table stays readable on mobile scroll */
+        }
+
+        th, td { 
+            border: 1px solid #ddd; 
+            padding: 10px; 
+            text-align: left; 
+            font-size: 14px;
+        }
+
+        th { background-color: #f8f9fa; color: #2c3e50; }
+
+        optgroup { font-weight: bold; color: #2c3e50; }
+
+        /* Mobile Screen Adjustments */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 15px; }
+            h2 { font-size: 1.1rem; }
+            th, td { padding: 8px; font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Employee Data Entry Form</h2>
+        
+        <form action="/add" method="POST">
+            <input type="text" name="name" placeholder="Full Name" required>
+            <input type="email" name="email" placeholder="Email Address (e.g., user@company.com)" required>
+            
+            <select name="department" required>
+                <option value="" disabled selected>Select Department & Role...</option>
+                
+                <optgroup label="1. Accounts and Finance">
+                    <option value="Accounts & Finance - Manager">Manager</option>
+                    <option value="Accounts & Finance - Payables Officer">Payables Officer</option>
+                    <option value="Accounts & Finance - Receivables Officer">Receivables Officer</option>
+                    <option value="Accounts & Finance - Billing Clerk">Billing Clerk</option>
+                </optgroup>
+
+                <optgroup label="2. Regulatory Authority">
+                    <option value="Regulatory - PV Officer">PV Officer</option>
+                    <option value="Regulatory - Compliance Administrator">Regulatory Compliance Administrator</option>
+                </optgroup>
+
+                <optgroup label="3. Country Manager">
+                    <option value="Country Manager - Spectra Acute Manager">Spectra Acute Manager</option>
+                    <option value="Country Manager - Specialty Manager">Specialty Manager</option>
+                    <option value="Country Manager - Spectra CVD Manager">Spectra CVD Manager</option>
+                </optgroup>
+
+                <optgroup label="4. Medical Representatives">
+                    <option value="Medical Rep - Specialty">Medical Representative – Specialty</option>
+                    <option value="Medical Rep - Spectra Acute">Medical Representative – Spectra Acute</option>
+                    <option value="Medical Rep - Spectra CVD">Medical Representative – Spectra CVD</option>
+                    <option value="Medical Rep - Manager Spectra CVD">Medical Representative Manager – Spectra CVD</option>
+                    <option value="Medical Rep - Manager Spectra Acute">Medical Representative Manager – Spectra Acute</option>
+                    <option value="Medical Rep - Manager Specialty">Medical Representative Manager – Specialty</option>
+                </optgroup>
+
+                <optgroup label="5. Operations and Logistics">
+                    <option value="Operations - Warehouse Officer">Warehouse Officer</option>
+                    <option value="Operations - Driver">Driver</option>
+                </optgroup>
+
+                <optgroup label="6. IT and Digital Infrastructure">
+                    <option value="IT & Digital - Sales Admin & Data Analyst">Sales Admin and Data Analyst</option>
+                </optgroup>
+            </select>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <h2>Live Database Records</h2>
+        
+        <div class="table-responsive">
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Department / Role</th>
+                </tr>
+                {% for row in records %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <script>
+            alert("{{ messages[0] | safe }}");
+        </script>
+      {% endif %}
+    {% endwith %}
+
+</body>
+</html>
