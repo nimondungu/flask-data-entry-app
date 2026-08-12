@@ -2,14 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Viewport tag ensures mobile devices scale pixel dimensions correctly -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enterprise Data Entry Portal</title>
     <style>
         * { box-sizing: border-box; }
         body { 
             font-family: Arial, sans-serif; 
-            max-width: 800px; 
+            max-width: 600px; 
             margin: 0 auto; 
             padding: 15px; 
             line-height: 1.5; 
@@ -41,7 +40,7 @@
         input, select, button { 
             width: 100%; 
             padding: 12px; 
-            font-size: 16px; /* 16px prevents iOS Safari auto-zoom on focus */
+            font-size: 16px; 
             border: 1px solid #ccc; 
             border-radius: 6px; 
             appearance: none;
@@ -66,37 +65,12 @@
 
         button:hover { background-color: #219150; }
 
-        /* Responsive Table Wrapper */
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin-top: 10px; 
-            min-width: 500px; /* Ensures table stays readable on mobile scroll */
-        }
-
-        th, td { 
-            border: 1px solid #ddd; 
-            padding: 10px; 
-            text-align: left; 
-            font-size: 14px;
-        }
-
-        th { background-color: #f8f9fa; color: #2c3e50; }
-
         optgroup { font-weight: bold; color: #2c3e50; }
 
-        /* Mobile Screen Adjustments */
         @media (max-width: 600px) {
             body { padding: 10px; }
             .container { padding: 15px; }
             h2 { font-size: 1.1rem; }
-            th, td { padding: 8px; font-size: 13px; }
         }
     </style>
 </head>
@@ -151,29 +125,6 @@
 
             <button type="submit">Submit</button>
         </form>
-    </div>
-
-    <div class="container">
-        <h2>Live Database Records</h2>
-        
-        <div class="table-responsive">
-            <table>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Department / Role</th>
-                </tr>
-                {% for row in records %}
-                <tr>
-                    <td>{{ row[0] }}</td>
-                    <td>{{ row[1] }}</td>
-                    <td>{{ row[2] }}</td>
-                    <td>{{ row[3] }}</td>
-                </tr>
-                {% endfor %}
-            </table>
-        </div>
     </div>
 
     {% with messages = get_flashed_messages() %}

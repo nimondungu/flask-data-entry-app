@@ -2,7 +2,6 @@ import sqlite3
 from flask import Flask, render_template_string, request, redirect, flash, get_flashed_messages
 
 app = Flask(__name__)
-# Secret key is required to use Flask's flash messaging system
 app.secret_key = 'super_secret_key_for_flash_messages'
 
 def get_db_connection():
@@ -25,18 +24,30 @@ def init_db():
 
 init_db()
 
-@app.route('/')
-def home():
-    with open('index.html', 'r', encoding='utf-8') as f:
-        html_content = f.read()
-
+def print_backend_records():
+    """Helper function to print database contents to the backend terminal."""
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM employees ORDER BY id ASC')
     records = cursor.fetchall()
     conn.close()
 
-    return render_template_string(html_content, records=records)
+    print("\n" + "="*50)
+    print("      BACKEND DATABASE RECORDS (LIVE VIEW)")
+    print("="*50)
+    for row in records:
+        print(f"ID: {row[0]} | Name: {row[1]} | Email: {row[2]} | Role: {row[3]}")
+    print("="*50 + "\n")
+
+@app.route('/')
+def home():
+    with open('index.html', 'r', encoding='utf-8') as f:
+        html_content = f.read()
+
+    # Print database contents to VS Code terminal
+    print_backend_records()
+
+    return render_template_string(html_content)
 
 @app.route('/add', methods=['POST'])
 def add_record():
@@ -44,7 +55,6 @@ def add_record():
     email = request.form['email'].strip().lower()
     department = request.form['department']
 
-    # 1. Format check
     if "@" not in email or "." not in email:
         flash('Invalid email address format!')
         return redirect('/')
@@ -52,17 +62,14 @@ def add_record():
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # 2. Duplicate check
     cursor.execute('SELECT id FROM employees WHERE email = ?', (email,))
     existing_user = cursor.fetchone()
 
     if existing_user:
         conn.close()
-        # Flash the message to session memory (URL stays clean)
-        flash(f'The email "{email}" is already registered!')
+        flash(f'The email {email} is already registered!')
         return redirect('/')
 
-    # 3. Save record if unique
     try:
         cursor.execute(
             'INSERT INTO employees (name, email, department) VALUES (?, ?, ?)',
